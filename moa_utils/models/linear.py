@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 class Model1(nn.Module):
     def __init__(self, num_features, num_targets, hidden_size):
-        super(Model, self).__init__()
+        super(Model1, self).__init__()
         self.batch_norm1 = nn.BatchNorm1d(num_features)
         self.dropout1 = nn.Dropout(0.2)
         self.dense1 = nn.utils.weight_norm(nn.Linear(num_features, hidden_size))
