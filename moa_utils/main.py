@@ -157,9 +157,8 @@ def run_training(c):
     for epoch in range(epochs):
 
         train_loss = train_fn(model, optimizer, scheduler, loss_fn, trainloader, device)
-        print(f"FOLD: {fold}, EPOCH: {epoch}, train_loss: {train_loss}")
         valid_loss, valid_preds = valid_fn(model, loss_fn, validloader, device)
-        print(f"FOLD: {fold}, EPOCH: {epoch}, valid_loss: {valid_loss}")
+        print(f"FOLD: {fold}, EPOCH: {epoch}, train_loss: {train_loss}, valid_loss: {valid_loss}")
 
         tune.report(train_loss=train_loss, valid_loss=valid_loss)
 
