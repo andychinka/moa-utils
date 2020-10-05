@@ -103,8 +103,10 @@ def run_training(c):
     folds = c["folds"]
     test = c["test"]
     target = c["target"]
-    feature_cols = c["feature_cols"]
-    target_cols = c["target_cols"]
+    global feature_cols
+    global target_cols
+    # feature_cols = c["feature_cols"]
+    # target_cols = c["target_cols"]
     batch_size = c["batch_size"]
     num_features = c["num_features"]
     num_targets = c["num_targets"]
