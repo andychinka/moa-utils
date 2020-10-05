@@ -95,6 +95,14 @@ def process_data(data):
 
     return data
 
+feature_cols = None
+target_cols = None
+
+def set_cols(fc, tc):
+    global feature_cols
+    global target_cols
+    feature_cols = fc
+    target_cols = tc
 
 def run_training(c):
     # fold, seed
