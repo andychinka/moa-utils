@@ -95,24 +95,38 @@ def process_data(data):
 
     return data
 
+folds = None
 feature_cols = None
 target_cols = None
+test = None
+target = None
 
-def set_cols(fc, tc):
+
+def set_cols(_folds, fc, tc, _test, _target):
+    global folds
     global feature_cols
     global target_cols
+    global test
+    global target
+
+    folds = _folds
     feature_cols = fc
     target_cols = tc
+    test =_test
+    target = _target
 
 def run_training(c):
     # fold, seed
     seed = c["seed"]
     fold = c["fold"]
-    folds = c["folds"]
-    test = c["test"]
-    target = c["target"]
+    # folds = c["folds"]
+    # test = c["test"]
+    # target = c["target"]
+    global folds
     global feature_cols
     global target_cols
+    global test
+    global target
     # feature_cols = c["feature_cols"]
     # target_cols = c["target_cols"]
     batch_size = c["batch_size"]
