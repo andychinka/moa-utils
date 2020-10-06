@@ -7,6 +7,7 @@ from ray import tune
 
 from moa_utils.dataset import MoADataset, TestDataset
 from moa_utils.models import linear
+from moa_utils import fe
 
 def train_fn(model, optimizer, scheduler, loss_fn, dataloader, device):
     model.train()
@@ -139,6 +140,21 @@ def run_training(c):
     epochs = c["epochs"]
     early_stopping_steps = c["early_stopping_steps"]
     early_stop = c["early_stop"]
+
+    is_drop_cp_type = False if "is_drop_cp_type" not in c else c["is_drop_cp_type"]
+    pca_gens_n_comp = None if "pca_gens_n_comp" not in c else c["pca_gens_n_comp"]
+    pca_cells_n_comp = None if "pca_cells_n_comp" not in c else c["pca_gens_n_comp"]
+
+    if is_drop_cp_type:
+        folds, test, target = fe.drop_cp_type(folds, test, target)
+
+    if pca_gens_n_comp is not None:
+        GENES = [col for col in folds.columns if col.startswith('g-')]
+        folds, test = fe.fe_pca(folds, test, pca_gens_n_comp, GENES)
+
+    if pca_cells_n_comp is not None:
+        CELLS = [col for col in folds.columns if col.startswith('c-')]
+        folds, test = fe.fe_pca(folds, test, pca_gens_n_comp, CELLS)
 
     # seed_everything(seed)
 
