@@ -129,7 +129,7 @@ def run_training(c):
     folds = _folds.copy()
     test = _test.copy()
     target = _target.copy()
-    
+
     # feature_cols = c["feature_cols"]
     # target_cols = c["target_cols"]
     batch_size = c["batch_size"]
@@ -144,17 +144,17 @@ def run_training(c):
     early_stop = c["early_stop"]
 
     is_drop_cp_type = False if "is_drop_cp_type" not in c else c["is_drop_cp_type"]
-    pca_gens_n_comp = None if "pca_gens_n_comp" not in c else c["pca_gens_n_comp"]
-    pca_cells_n_comp = None if "pca_cells_n_comp" not in c else c["pca_cells_n_comp"]
+    pca_gens_n_comp = 0 if "pca_gens_n_comp" not in c else c["pca_gens_n_comp"]
+    pca_cells_n_comp = 0 if "pca_cells_n_comp" not in c else c["pca_cells_n_comp"]
 
     if is_drop_cp_type:
         folds, test = fe.drop_cp_type(folds, test)
 
-    if pca_gens_n_comp is not None:
+    if pca_gens_n_comp > 0:
         GENES = [col for col in folds.columns if col.startswith('g-')]
         folds, test = fe.fe_pca(folds, test, GENES, "g", pca_gens_n_comp)
 
-    if pca_cells_n_comp is not None:
+    if pca_cells_n_comp > 0:
         CELLS = [col for col in folds.columns if col.startswith('c-')]
         folds, test = fe.fe_pca(folds, test, CELLS, "c", pca_cells_n_comp)
 
