@@ -143,7 +143,7 @@ def run_training(c):
 
     is_drop_cp_type = False if "is_drop_cp_type" not in c else c["is_drop_cp_type"]
     pca_gens_n_comp = None if "pca_gens_n_comp" not in c else c["pca_gens_n_comp"]
-    pca_cells_n_comp = None if "pca_cells_n_comp" not in c else c["pca_gens_n_comp"]
+    pca_cells_n_comp = None if "pca_cells_n_comp" not in c else c["pca_cells_n_comp"]
 
     if is_drop_cp_type:
         folds, test, target = fe.drop_cp_type(folds, test, target)
