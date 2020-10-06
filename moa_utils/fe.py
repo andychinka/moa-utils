@@ -27,16 +27,14 @@ def variance_thredshold(train_features: pd.DataFrame, test_features: pd.DataFram
     return train_features, test_features
 
 
-def drop_cp_type(train: pd.DataFrame, test_features: pd.DataFrame, train_targets_scored: pd.DataFrame):
+def drop_cp_type(train: pd.DataFrame, test_features: pd.DataFrame):
     train = train[train['cp_type'] != 'ctl_vehicle'].reset_index(drop=True)
     test = test_features[test_features['cp_type'] != 'ctl_vehicle'].reset_index(drop=True)
-
-    target = train[train_targets_scored.columns]
 
     train = train.drop('cp_type', axis=1)
     test = test.drop('cp_type', axis=1)
 
-    return train, test, target
+    return train, test
 
 
 # required run before VarianceThreshold or changed column name

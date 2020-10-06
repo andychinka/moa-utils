@@ -146,7 +146,7 @@ def run_training(c):
     pca_cells_n_comp = None if "pca_cells_n_comp" not in c else c["pca_cells_n_comp"]
 
     if is_drop_cp_type:
-        folds, test, target = fe.drop_cp_type(folds, test, target)
+        folds, test = fe.drop_cp_type(folds, test)
 
     if pca_gens_n_comp is not None:
         GENES = [col for col in folds.columns if col.startswith('g-')]
