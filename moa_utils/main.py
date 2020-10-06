@@ -148,11 +148,11 @@ def run_training(c):
 
     if pca_gens_n_comp is not None:
         GENES = [col for col in folds.columns if col.startswith('g-')]
-        folds, test = fe.fe_pca(folds, test, pca_gens_n_comp, GENES, "g")
+        folds, test = fe.fe_pca(folds, test, GENES, pca_gens_n_comp, "g")
 
     if pca_cells_n_comp is not None:
         CELLS = [col for col in folds.columns if col.startswith('c-')]
-        folds, test = fe.fe_pca(folds, test, pca_gens_n_comp, CELLS, "c")
+        folds, test = fe.fe_pca(folds, test, CELLS, pca_gens_n_comp, "c")
 
     target_cols = target.drop('sig_id', axis=1).columns.values.tolist()
     feature_cols = [c for c in process_data(folds).columns if c not in target_cols]
