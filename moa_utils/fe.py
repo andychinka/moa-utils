@@ -47,19 +47,18 @@ def binning(train, test, cols, bins=3):
 
 
 # need to run before VarianceThreshold
-def fe_pca(train, test, cols, n_comp=50, random_state=42):
+def fe_pca(train, test, cols, col_label, n_comp=50, random_state=42):
     data = pd.concat([pd.DataFrame(train[cols]), pd.DataFrame(test[cols])])
     data2 = (PCA(n_components=n_comp, random_state=random_state).fit_transform(data[cols]))
     train2 = data2[:train.shape[0]];
     test2 = data2[train.shape[0]:]
 
-    train2 = pd.DataFrame(train2, columns=[f'c-{i}' for i in range(n_comp)])
-    test2 = pd.DataFrame(test2, columns=[f'c-{i}' for i in range(n_comp)])
-
-    train2 = pd.DataFrame(train2, columns=[f'pca_G-{i}' for i in range(n_comp)])
-    test2 = pd.DataFrame(test2, columns=[f'pca_G-{i}' for i in range(n_comp)])
+    train2 = pd.DataFrame(train2, columns=[f'pca_{col_label}-{i}' for i in range(n_comp)])
+    test2 = pd.DataFrame(test2, columns=[f'pca_{col_label}-{i}' for i in range(n_comp)])
 
     # drop_cols = [f'c-{i}' for i in range(n_comp, len(cols))]
+    train = train.drop(cols, axis=1)
+    test = test.drop(cols, axis=1)
     train = pd.concat((train, train2), axis=1)
     test = pd.concat((test, test2), axis=1)
 
