@@ -97,22 +97,22 @@ def process_data(data):
     return data
 
 folds = None
-feature_cols = None
-target_cols = None
+# feature_cols = None
+# target_cols = None
 test = None
 target = None
 
 
-def set_cols(_folds, fc, tc, _test, _target):
+def set_cols(_folds, _test, _target):
     global folds
-    global feature_cols
-    global target_cols
+    # global feature_cols
+    # global target_cols
     global test
     global target
 
     folds = _folds
-    feature_cols = fc
-    target_cols = tc
+    # feature_cols = fc
+    # target_cols = tc
     test =_test
     target = _target
 
@@ -124,15 +124,13 @@ def run_training(c):
     # test = c["test"]
     # target = c["target"]
     global folds
-    global feature_cols
-    global target_cols
     global test
     global target
     # feature_cols = c["feature_cols"]
     # target_cols = c["target_cols"]
     batch_size = c["batch_size"]
-    num_features = c["num_features"]
-    num_targets = c["num_targets"]
+    # num_features = c["num_features"]
+    # num_targets = c["num_targets"]
     hidden_size = c["hidden_size"]
     device = c["device"]
     lr = c["lr"]
@@ -155,6 +153,12 @@ def run_training(c):
     if pca_cells_n_comp is not None:
         CELLS = [col for col in folds.columns if col.startswith('c-')]
         folds, test = fe.fe_pca(folds, test, pca_gens_n_comp, CELLS)
+
+    target_cols = target.drop('sig_id', axis=1).columns.values.tolist()
+    feature_cols = [c for c in process_data(folds).columns if c not in target_cols]
+    feature_cols = [c for c in feature_cols if c not in ['kfold', 'sig_id']]
+    num_features = len(feature_cols)
+    num_targets = len(target_cols)
 
     # seed_everything(seed)
 
