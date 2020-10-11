@@ -120,7 +120,6 @@ def run_training(c):
     # fold, seed
     seed = c["seed"]
     fold = c[tune.suggest.repeater.TRIAL_INDEX] #c["fold"]
-    print("TRIAL_INDEX: ", fold)
     # folds = c["folds"]
     # test = c["test"]
     # target = c["target"]
@@ -145,8 +144,8 @@ def run_training(c):
     early_stop = c["early_stop"]
 
     is_drop_cp_type = False if "is_drop_cp_type" not in c else c["is_drop_cp_type"]
-    pca_gens_n_comp = 0 if "pca_gens_n_comp" not in c else c["pca_gens_n_comp"]
-    pca_cells_n_comp = 0 if "pca_cells_n_comp" not in c else c["pca_cells_n_comp"]
+    pca_gens_n_comp = 0 if "pca_gens_n_comp" not in c else int(c["pca_gens_n_comp"])
+    pca_cells_n_comp = 0 if "pca_cells_n_comp" not in c else int(c["pca_cells_n_comp"])
 
     if is_drop_cp_type:
         folds, test = fe.drop_cp_type(folds, test)
