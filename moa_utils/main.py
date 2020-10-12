@@ -135,7 +135,7 @@ def run_training(c):
     batch_size = int(c["batch_size"])
     # num_features = c["num_features"]
     # num_targets = c["num_targets"]
-    hidden_size = int(c["hidden_size"])
+    hidden_size = 512 if "hidden_size" not in c else int(c["hidden_size"])
     device = c["device"]
     lr = c["lr"]
     weight_decay = c["weight_decay"]
