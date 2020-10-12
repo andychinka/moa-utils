@@ -132,15 +132,15 @@ def run_training(c):
 
     # feature_cols = c["feature_cols"]
     # target_cols = c["target_cols"]
-    batch_size = c["batch_size"]
+    batch_size = int(c["batch_size"])
     # num_features = c["num_features"]
     # num_targets = c["num_targets"]
-    hidden_size = c["hidden_size"]
+    hidden_size = int(c["hidden_size"])
     device = c["device"]
     lr = c["lr"]
     weight_decay = c["weight_decay"]
     epochs = c["epochs"]
-    early_stopping_steps = c["early_stopping_steps"]
+    early_stopping_steps = int(c["early_stopping_steps"])
     early_stop = c["early_stop"]
 
     is_drop_cp_type = False if "is_drop_cp_type" not in c else c["is_drop_cp_type"]
