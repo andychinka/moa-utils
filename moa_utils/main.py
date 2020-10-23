@@ -189,7 +189,7 @@ def run_training(c):
     validloader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
 
     if network_type == "linear3":
-        hidden_size = network_d.get("hidden_size", 512)
+        hidden_size = int(network_d.get("hidden_size", 512))
 
         model = linear.Model1(
             num_features=num_features,
@@ -248,11 +248,16 @@ def run_training(c):
     testdataset = TestDataset(x_test)
     testloader = torch.utils.data.DataLoader(testdataset, batch_size=batch_size, shuffle=False)
 
-    model = linear.Model1(
-        num_features=num_features,
-        num_targets=num_targets,
-        hidden_size=hidden_size,
-    )
+    if network_type == "linear3":
+        hidden_size = int(network_d.get("hidden_size", 512))
+
+        model = linear.Model1(
+            num_features=num_features,
+            num_targets=num_targets,
+            hidden_size=hidden_size,
+        )
+    else:
+        raise Exception("Unknown network_type: {}".format(network_type))
 
     model.load_state_dict(torch.load(f"FOLD{fold}_.pth"))
     model.to(device)
