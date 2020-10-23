@@ -130,22 +130,24 @@ def run_training(c):
     test = _test.copy()
     target = _target.copy()
 
-    # feature_cols = c["feature_cols"]
-    # target_cols = c["target_cols"]
     batch_size = int(c["batch_size"])
-    # num_features = c["num_features"]
-    # num_targets = c["num_targets"]
-    hidden_size = 512 if "hidden_size" not in c else int(c["hidden_size"])
+
     device = c["device"]
-    lr = c["lr"]
-    weight_decay = c["weight_decay"]
+    network_d = c.get("network", {})
+    network_type = network_d.get("type", "linear3")
+
+    opt_d = c.get("opt", {})
+    opt_type = opt_d.get("type")
+    lr = opt_d.get("lr")
+    weight_decay = opt_d.get("weight_decay")
+
     epochs = c["epochs"]
     early_stopping_steps = int(c["early_stopping_steps"])
     early_stop = c["early_stop"]
 
-    is_drop_cp_type = False if "is_drop_cp_type" not in c else c["is_drop_cp_type"]
-    pca_gens_n_comp = 0 if "pca_gens_n_comp" not in c else int(c["pca_gens_n_comp"])
-    pca_cells_n_comp = 0 if "pca_cells_n_comp" not in c else int(c["pca_cells_n_comp"])
+    is_drop_cp_type = c.get("is_drop_cp_type", False)
+    pca_gens_n_comp = int(c.get("pca_gens_n_comp", 0))
+    pca_cells_n_comp = int(c.get("pca_cells_n_comp", 0))
 
     if is_drop_cp_type:
         folds, test = fe.drop_cp_type(folds, test)
@@ -183,17 +185,31 @@ def run_training(c):
     trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     validloader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
 
-    model = linear.Model1(
-        num_features=num_features,
-        num_targets=num_targets,
-        hidden_size=hidden_size,
-    )
+    if network_type == "linear3":
+        hidden_size = network_d.get("hidden_size", 512)
+
+        model = linear.Model1(
+            num_features=num_features,
+            num_targets=num_targets,
+            hidden_size=hidden_size,
+        )
+    else:
+        raise Exception("Unknown network_type: {}".format(network_type))
 
     model.to(device)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    if opt_type == "Adam":
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    elif opt_type == "AdamW":
+        optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+    elif opt_type == "SGD":
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr, weight_decay=weight_decay)
+    else:
+        raise Exception("Unknown opt_type: {}".format(opt_type))
+
     scheduler = optim.lr_scheduler.OneCycleLR(optimizer=optimizer, pct_start=0.1, div_factor=1e3,
                                               max_lr=1e-2, epochs=epochs, steps_per_epoch=len(trainloader))
+    # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, factor=0.5, patience=10)
 
     loss_fn = nn.BCEWithLogitsLoss()
 
@@ -203,12 +219,14 @@ def run_training(c):
     best_loss = np.inf
 
     for epoch in range(epochs):
+        for param_group in optimizer.param_groups:
+            current_lr = param_group['lr']
 
         train_loss = train_fn(model, optimizer, scheduler, loss_fn, trainloader, device)
         valid_loss, valid_preds = valid_fn(model, loss_fn, validloader, device)
         print(f"FOLD: {fold}, EPOCH: {epoch}, train_loss: {train_loss}, valid_loss: {valid_loss}")
 
-        tune.report(train_loss=train_loss, valid_loss=valid_loss)
+        tune.report(train_loss=train_loss, valid_loss=valid_loss, lr=current_lr)
 
         if valid_loss < best_loss:
 
