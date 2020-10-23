@@ -117,6 +117,9 @@ def set_cols(folds, test, target):
     _target = target
 
 def run_training(c):
+
+    print("config: ", c)
+
     # fold, seed
     seed = c["seed"]
     fold = c[tune.suggest.repeater.TRIAL_INDEX] #c["fold"]
