@@ -163,18 +163,18 @@ space = {
     "opt": hp.choice("opt", [
         {
             "type": "Adam",
-            "lr": hp.choice("lr", [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]),
-            "weight_decay": hp.uniform("weight_decay", 0, 1e-1),
+            "lr": hp.choice("Adam_lr", [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]),
+            "weight_decay": hp.uniform("Adam_weight_decay", 0, 1e-1),
         },
         {
             "type": "AdamW",
-            "lr": hp.choice("lr", [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]),
-            "weight_decay": hp.uniform("weight_decay", 0, 1e-1),
+            "lr": hp.choice("AdamW_lr", [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]),
+            "weight_decay": hp.uniform("AdamW_weight_decay", 0, 1e-1),
         },
         {
             "type": "SGD",
-            "lr": hp.choice("lr", [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]),
-            "weight_decay": hp.uniform("weight_decay", 0, 1e-1),
+            "lr": hp.choice("SGD_lr", [1e-5, 1e-4, 1e-3, 1e-2, 1e-1]),
+            "weight_decay": hp.uniform("SGD_weight_decay", 0, 1e-1),
         }
     ]),
 }
