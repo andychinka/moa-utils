@@ -101,7 +101,7 @@ _folds = None
 # target_cols = None
 _test = None
 _target = None
-
+_hyperopt = None
 
 def set_cols(folds, test, target):
     global _folds
@@ -116,6 +116,10 @@ def set_cols(folds, test, target):
     _test = test
     _target = target
 
+def set_hyperopt(hyperopt):
+    global _hyperopt
+    _hyperopt = hyperopt
+
 def run_training(c):
 
     print("config: ", c)
@@ -129,6 +133,7 @@ def run_training(c):
     global _folds
     global _test
     global _target
+    global _hyperopt
     folds = _folds.copy()
     test = _test.copy()
     target = _target.copy()
@@ -264,5 +269,7 @@ def run_training(c):
 
     predictions = np.zeros((len(test_), target.iloc[:, 1:].shape[1]))
     predictions = inference_fn(model, testloader, device)
+
+    _hyperopt.save("./hyperopt.cp")
 
     return oof, predictions

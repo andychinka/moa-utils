@@ -116,7 +116,7 @@ from ray.tune.suggest import Repeater
 from ray.tune.schedulers import AsyncHyperBandScheduler
 
 ray.shutdown()
-ray.init(local_mode=False, dashboard_host="0.0.0.0", num_cpus=2) # num_cpus limited the cpu assign to ray, default will use all
+ray.init(local_mode=True, dashboard_host="0.0.0.0", num_cpus=1) # num_cpus limited the cpu assign to ray, default will use all
 
 from moa_utils.main import set_cols
 set_cols(folds, test, target)
@@ -178,20 +178,30 @@ space = {
         }
     ]),
 }
-
-# space = {
-#     "pca_cells_n_comp": hp.quniform("pca_cells_n_comp", 5, 20, 1),
-#     "pca_gens_n_comp": hp.quniform("pca_gens_n_comp", 0, 50, 1),
-#     "network": hp.choice("network", ["linear3"]),
-#     "hidden_size": hp.quniform("hidden_size", 128, 768, 1),
-# }
-
+current_best_params = [
+    {
+        # "pca_cells_n_comp":
+        "network": {
+            "type": "linear3",
+            "hidden_size": 512
+        },
+        "opt": {
+            "type": "Adam",
+            "lr": 1e-3,
+            "weight_decay": 1e-5
+        }
+    }
+]
 
 hyperopt = HyperOptSearch(
     metric="valid_loss", mode="min",
     n_initial_points=5, max_concurrent=1,
+    points_to_evaluate=current_best_params,
     space=space)
 re_search_alg = Repeater(hyperopt, repeat=NFOLDS)
+
+from moa_utils.main import set_hyperopt
+set_hyperopt(hyperopt)
 
 ahb = AsyncHyperBandScheduler(
         time_attr="training_iteration",
@@ -211,4 +221,5 @@ tune.run(run_training,
          resources_per_trial={"cpu": 1}
         )
 
+hyperopt.save("./hyperopt.cp")
 # %% [code]
