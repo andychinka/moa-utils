@@ -270,6 +270,6 @@ def run_training(c):
     predictions = np.zeros((len(test_), target.iloc[:, 1:].shape[1]))
     predictions = inference_fn(model, testloader, device)
 
-    _hyperopt.save("./hyperopt.cp")
+    # _hyperopt.save("./hyperopt.cp")
 
     return oof, predictions

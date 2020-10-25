@@ -200,8 +200,8 @@ hyperopt = HyperOptSearch(
     space=space)
 re_search_alg = Repeater(hyperopt, repeat=NFOLDS)
 
-from moa_utils.main import set_hyperopt
-set_hyperopt(hyperopt)
+# from moa_utils.main import set_hyperopt
+# set_hyperopt(hyperopt)
 
 ahb = AsyncHyperBandScheduler(
         time_attr="training_iteration",
@@ -216,7 +216,7 @@ tune.run(run_training,
          local_dir="./ray_results",
          search_alg=re_search_alg,
          scheduler=ahb,
-         num_samples=NFOLDS*100,
+         num_samples=NFOLDS*60,
          #stop={"training_iteration": 5},
          resources_per_trial={"cpu": 1}
         )
