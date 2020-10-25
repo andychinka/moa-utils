@@ -180,7 +180,15 @@ space = {
 }
 current_best_params = [
     {
-        # "pca_cells_n_comp":
+        "seed": 42,
+        "batch_size": 128,
+        "device": ('cuda' if torch.cuda.is_available() else 'cpu'),
+        "epochs": 40,
+        "early_stopping_steps": 10,
+        "early_stop": False,
+        "is_drop_cp_type": True,
+        "pca_cells_n_comp": 0.7,
+        "pca_gens_n_comp": 0.7,
         "network": {
             "type": "linear3",
             "hidden_size": 512
@@ -212,7 +220,7 @@ ahb = AsyncHyperBandScheduler(
 
 tune.run(run_training,
          # config=config,
-         name="test_run11",
+         name="hyperopt_run_1",
          local_dir="./ray_results",
          search_alg=re_search_alg,
          scheduler=ahb,
