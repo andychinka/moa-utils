@@ -189,15 +189,8 @@ current_best_params = [
         "is_drop_cp_type": True,
         "pca_cells_n_comp": 0.7,
         "pca_gens_n_comp": 0.7,
-        "network": {
-            "type": "linear3",
-            "hidden_size": 512
-        },
-        "opt": {
-            "type": "Adam",
-            "lr": 1e-3,
-            "weight_decay": 1e-5
-        }
+        "network": 0,
+        "opt": 0
     }
 ]
 
