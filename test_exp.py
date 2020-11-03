@@ -9,20 +9,9 @@ import moa_utils
 import numpy as np
 import random
 import pandas as pd
-import matplotlib.pyplot as plt
 import os
-import copy
-import seaborn as sns
-
-from sklearn import preprocessing
-from sklearn.metrics import log_loss
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -121,24 +110,6 @@ ray.init(local_mode=True, dashboard_host="0.0.0.0", num_cpus=1) # num_cpus limit
 from moa_utils.main import set_cols
 set_cols(folds, test, target)
 
-# config = {
-#              "seed": 42,
-#              "batch_size": 128,
-# #             "num_features": len(feature_cols),
-# #             "num_targets": len(target_cols),
-# #             "hidden_size": 512, #tune.grid_search([128, 256, 512, 768]), #tune.grid_search([128, 256, 512, 768]), #128, #tune.uniform(128, 768), #512
-#              "device": ('cuda' if torch.cuda.is_available() else 'cpu'),
-#              "lr": 1e-3,
-#              "weight_decay": 1e-5,
-#              "epochs": 25,
-#              "early_stopping_steps": 10,
-#              "early_stop": False,
-#              "is_drop_cp_type": True,
-#              #"pca_gens_n_comp": 0, #tune.grid_search([0, 25, 50]),
-#              #"pca_cells_n_comp": tune.grid_search([0, 5, 10]),
-#              #"pca_cells_n_comp": tune.uniform(0, 10)
-#          }
-
 space = {
     "seed": 42,
     "batch_size": 128,
@@ -196,13 +167,19 @@ current_best_params = [
 
 hyperopt = HyperOptSearch(
     metric="valid_loss", mode="min",
-    n_initial_points=5, max_concurrent=1,
+    n_initial_points=NFOLDS*5, max_concurrent=1,
     points_to_evaluate=current_best_params,
     space=space)
+hyperopt_cp = "./hyperopt.cp"
+
+if os.path.isfile(hyperopt_cp):
+    print("Restore Hyperopt from checkpoint: ", hyperopt_cp)
+    hyperopt.restore(hyperopt_cp)
+
 re_search_alg = Repeater(hyperopt, repeat=NFOLDS)
 
-# from moa_utils.main import set_hyperopt
-# set_hyperopt(hyperopt)
+from moa_utils.main import set_hyperopt
+set_hyperopt(hyperopt)
 
 ahb = AsyncHyperBandScheduler(
         time_attr="training_iteration",
@@ -213,7 +190,7 @@ ahb = AsyncHyperBandScheduler(
 
 tune.run(run_training,
          # config=config,
-         name="hyperopt_run_1",
+         name="hyperopt_run_2",
          local_dir="./ray_results",
          search_alg=re_search_alg,
          scheduler=ahb,
@@ -222,5 +199,5 @@ tune.run(run_training,
          resources_per_trial={"cpu": 1}
         )
 
-hyperopt.save("./hyperopt.cp")
+hyperopt.save(hyperopt_cp)
 # %% [code]
