@@ -178,8 +178,8 @@ if os.path.isfile(hyperopt_cp):
 
 re_search_alg = Repeater(hyperopt, repeat=NFOLDS)
 
-from moa_utils.main import set_hyperopt
-set_hyperopt(hyperopt)
+# from moa_utils.main import set_hyperopt
+# set_hyperopt(hyperopt)
 
 ahb = AsyncHyperBandScheduler(
         time_attr="training_iteration",
