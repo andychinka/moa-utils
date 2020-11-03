@@ -168,7 +168,7 @@ current_best_params = [
 hyperopt = HyperOptSearch(
     metric="valid_loss", mode="min",
     n_initial_points=NFOLDS*5, max_concurrent=1,
-    points_to_evaluate=current_best_params,
+    # points_to_evaluate=current_best_params,
     space=space)
 hyperopt_cp = "./hyperopt.cp"
 
@@ -178,8 +178,8 @@ if os.path.isfile(hyperopt_cp):
 
 re_search_alg = Repeater(hyperopt, repeat=NFOLDS)
 
-# from moa_utils.main import set_hyperopt
-# set_hyperopt(hyperopt)
+from moa_utils.main import set_hyperopt
+set_hyperopt(hyperopt)
 
 ahb = AsyncHyperBandScheduler(
         time_attr="training_iteration",
